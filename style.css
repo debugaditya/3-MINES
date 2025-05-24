@@ -48,7 +48,7 @@ p {
 /* Form style */
 form {
   position: absolute;
-  top:30%
+  top: 5%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,6 +64,7 @@ form {
 
 form label {
   color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
 }
 
 form input[type="number"] {
@@ -114,6 +115,7 @@ form button[type="submit"]:hover {
   justify-content: center;
   align-items: center;
   width: max-content;
+  z-index: 1; /* Lower layer */
 }
 
 .box {
@@ -179,7 +181,4 @@ form button[type="submit"]:hover {
   background-color: #cc0000;
   transform: scale(1.05);
 }
-form label {
-  color: #ffffff;
-  font-family: 'Orbitron', sans-serif;
-}
+
