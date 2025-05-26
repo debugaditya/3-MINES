@@ -1,9 +1,8 @@
-function resetimages() {
+function resetimages() { 
   const boxes = document.querySelectorAll(".box");
   boxes.forEach(box => {
     box.style.backgroundImage = "none";
     box.style.backgroundColor = "";
-    // Restore original text from data attribute
     box.textContent = box.dataset.originalText || "";
     const newBox = box.cloneNode(true);
     box.parentNode.replaceChild(newBox, box);
@@ -22,7 +21,7 @@ function resetGame() {
   cnt = 0;
   const submitBtn = document.querySelector(".gameform button[type='submit']");
   submitBtn.disabled = false;
-  submitBtn.style.backgroundColor = ""; // Reset button color
+  submitBtn.style.backgroundColor = "";
 }
 
 function getThreeDistinctNumbers() {
@@ -40,10 +39,8 @@ let randomNumbers = [];
 
 document.querySelector(".gameform").addEventListener("submit", function (e) {
   e.preventDefault();
-
   const boxes = document.querySelectorAll(".box");
 
-  // Save original text and restore
   boxes.forEach(box => {
     if (!box.dataset.originalText) {
       box.dataset.originalText = box.textContent;
@@ -54,15 +51,6 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
     const newBox = box.cloneNode(true);
     box.parentNode.replaceChild(newBox, box);
   });
-
-  resetimages();
-
-  // ✅ After reset, re-enable boxes (i.e., set pointer-events back to auto)
-  setTimeout(() => {
-    document.querySelectorAll(".box").forEach(box => {
-      box.style.pointerEvents = "auto";
-    });
-  }, 0); // Ensures it happens after DOM reset
 
   const amountInput = document.getElementById("amt");
   const initialBalance = document.querySelector(".balance");
@@ -79,8 +67,10 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
 
   const submitBtn = document.querySelector(".gameform button[type='submit']");
   submitBtn.disabled = true;
-  submitBtn.style.backgroundColor = "green"; // ✅ Turn button green on game start
-
+  submitBtn.style.backgroundColor = "#ff4444";
+  const w = document.querySelector(".withdraw");
+  w.style.backgroundColor = "green";
+  w.disabled = false;
   randomNumbers = getThreeDistinctNumbers();
 
   const newBoxes = document.querySelectorAll(".box");
@@ -90,16 +80,18 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
       this.textContent = "";
 
       if (randomNumbers.includes(i)) {
+        const audio = new Audio('lose.wav');
+        audio.play();
         this.style.backgroundImage = "url('mine.jpg')";
         this.style.backgroundSize = "cover";
         this.style.backgroundPosition = "center";
         this.style.backgroundRepeat = "no-repeat";
-        const audio = new Audio('lose.wav');
-        audio.play();
         document.querySelector(".winning").textContent = `BET: 0$`;
-
         disableAllBoxes();
         resetGame();
+        const w = document.querySelector(".withdraw");
+        w.style.backgroundColor = "#ff4444";
+        w.disabled = true;
       } else {
         const audio = new Audio('ting.mp3');
         audio.play();
@@ -108,8 +100,8 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
         this.style.backgroundPosition = "center";
         this.style.backgroundRepeat = "no-repeat";
 
-        // ✅ Disable only this diamond box after click
-        this.style.pointerEvents = "none";
+        const clone = this.cloneNode(true);
+        box.parentNode.replaceChild(clone, this);
 
         cnt++;
         if (cnt == 1) amount *= 1.12;
@@ -123,19 +115,23 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
       }
     });
   });
-});
 
-document.querySelector(".withdraw").addEventListener("click", function () {
-  let currentWinning = Number(document.querySelector(".winning").textContent.match(/\d+(\.\d+)?/)[0]);
-  let balanceElement = document.querySelector(".balance");
-  let balance = Number(balanceElement.textContent.match(/\d+/)[0]);
-  balance += currentWinning;
-  const audio = new Audio('money.mp3');
-  audio.play();
-  balanceElement.textContent = `BALANCE: ${balance} $`;
-  document.querySelector(".winning").textContent = `BET: 0$`;
-  cnt = 0;
-  disableAllBoxes();
-  resetGame();
+  document.querySelector(".withdraw").addEventListener("click", function () {
+    w.style.backgroundColor = "#ff4444";
+    w.disabled = true;
+    let currentWinning = Number(document.querySelector(".winning").textContent.match(/\d+(\.\d+)?/)[0]);
+    let balanceElement = document.querySelector(".balance");
+    let balance = Number(balanceElement.textContent.match(/\d+/)[0]);
+    balance += currentWinning;
+    const audio = new Audio('money.mp3');
+    audio.play();
+    balanceElement.textContent = `BALANCE: ${balance} $`;
+    document.querySelector(".winning").textContent = `BET: 0$`;
+    cnt = 0;
+    const clone = this.cloneNode(true);
+    this.parentNode.replaceChild(clone, this);
+    disableAllBoxes();
+    resetGame();
+  });
 });
 
