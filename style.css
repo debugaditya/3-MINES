@@ -82,19 +82,19 @@ form input[type="number"]:focus {
 
 form button[type="submit"] {
   font-size: 1.2vw;
-  background-color: #ff4444;
+  background-color: green;
   color: white;
   border: none;
   padding: 1vh 2vw;
   border-radius: 0.5vw;
   cursor: pointer;
   font-family: 'Orbitron', sans-serif;
-  box-shadow: 0 0.5vh 0.8vw rgba(255, 0, 0, 0.4);
+  box-shadow: 0 0.5vh 0.8vw rgba(0, 85, 255, 0.518);
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 form button[type="submit"]:hover {
-  background-color: #cc0000;
+  background-color: darkgreen;
   transform: scale(1.05);
 }
 
@@ -156,7 +156,7 @@ form button[type="submit"]:hover {
   right: 5vw;
   width: 15vw;
   color: white;
-  background-color: #ff4444;
+  background-color:#ff4444;
   font-weight: bold;
   text-align: center;
   font-size: 1.5vw;
@@ -195,4 +195,3 @@ form button[type="submit"]:hover {
     font-size: 3vw;
   }
 }
-
