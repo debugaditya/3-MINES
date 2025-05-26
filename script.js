@@ -20,7 +20,9 @@ function disableAllBoxes() {
 
 function resetGame() {
   cnt = 0;
-  document.querySelector(".gameform button[type='submit']").disabled = false;
+  const submitBtn = document.querySelector(".gameform button[type='submit']");
+  submitBtn.disabled = false;
+  submitBtn.style.backgroundColor = ""; // Reset button color
 }
 
 function getThreeDistinctNumbers() {
@@ -41,7 +43,7 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
 
   const boxes = document.querySelectorAll(".box");
 
-  // Save original text content once and restore text on start/reset
+  // Save original text and restore
   boxes.forEach(box => {
     if (!box.dataset.originalText) {
       box.dataset.originalText = box.textContent;
@@ -49,13 +51,18 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
     box.textContent = box.dataset.originalText;
     box.style.backgroundImage = "none";
     box.style.backgroundColor = "";
-
-    // Replace with clone to remove old listeners if needed
     const newBox = box.cloneNode(true);
     box.parentNode.replaceChild(newBox, box);
   });
 
   resetimages();
+
+  // ✅ After reset, re-enable boxes (i.e., set pointer-events back to auto)
+  setTimeout(() => {
+    document.querySelectorAll(".box").forEach(box => {
+      box.style.pointerEvents = "auto";
+    });
+  }, 0); // Ensures it happens after DOM reset
 
   const amountInput = document.getElementById("amt");
   const initialBalance = document.querySelector(".balance");
@@ -69,16 +76,17 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
   }
 
   document.querySelector(".balance").textContent = `BALANCE: ${balance - amount} $`;
-  document.querySelector(".gameform button[type='submit']").disabled = true;
+
+  const submitBtn = document.querySelector(".gameform button[type='submit']");
+  submitBtn.disabled = true;
+  submitBtn.style.backgroundColor = "green"; // ✅ Turn button green on game start
 
   randomNumbers = getThreeDistinctNumbers();
 
-  // Re-query boxes because replaced with clones
   const newBoxes = document.querySelectorAll(".box");
 
   newBoxes.forEach((box, i) => {
     box.addEventListener("click", function handleClick() {
-      // Hide text on click
       this.textContent = "";
 
       if (randomNumbers.includes(i)) {
@@ -86,19 +94,23 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
         this.style.backgroundSize = "cover";
         this.style.backgroundPosition = "center";
         this.style.backgroundRepeat = "no-repeat";
-        const audio = new Audio('lose.wav'); // Path to your audio file
+        const audio = new Audio('lose.wav');
         audio.play();
         document.querySelector(".winning").textContent = `BET: 0$`;
 
         disableAllBoxes();
         resetGame();
       } else {
-        const audio = new Audio('ting.mp3'); // Path to your audio file
+        const audio = new Audio('ting.mp3');
         audio.play();
         this.style.backgroundImage = "url('diamond.svg')";
         this.style.backgroundSize = "cover";
         this.style.backgroundPosition = "center";
         this.style.backgroundRepeat = "no-repeat";
+
+        // ✅ Disable only this diamond box after click
+        this.style.pointerEvents = "none";
+
         cnt++;
         if (cnt == 1) amount *= 1.12;
         else if (cnt == 2) amount *= 1.29;
@@ -113,13 +125,12 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
   });
 });
 
-// Withdraw — now disables boxes
 document.querySelector(".withdraw").addEventListener("click", function () {
   let currentWinning = Number(document.querySelector(".winning").textContent.match(/\d+(\.\d+)?/)[0]);
   let balanceElement = document.querySelector(".balance");
   let balance = Number(balanceElement.textContent.match(/\d+/)[0]);
   balance += currentWinning;
-  const audio = new Audio('money.mp3'); // Path to your audio file
+  const audio = new Audio('money.mp3');
   audio.play();
   balanceElement.textContent = `BALANCE: ${balance} $`;
   document.querySelector(".winning").textContent = `BET: 0$`;
@@ -127,3 +138,4 @@ document.querySelector(".withdraw").addEventListener("click", function () {
   disableAllBoxes();
   resetGame();
 });
+
