@@ -1,3 +1,18 @@
+const audio3 = new Audio('money.mp3');
+const audio1 = new Audio('lose.wav');
+const audio2 = new Audio('ting.mp3');
+// ✅ Properly preload audio
+audio1.preload = "auto";
+audio2.preload = "auto";
+audio3.preload = "auto";
+audio1.load();
+audio2.load();
+audio3.load();
+
+// ✅ Preload images to remove lag
+new Image().src = "mine.jpg";
+new Image().src = "diamond.svg";
+
 function resetimages() { 
   const boxes = document.querySelectorAll(".box");
   boxes.forEach(box => {
@@ -80,8 +95,8 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
       this.textContent = "";
 
       if (randomNumbers.includes(i)) {
-        const audio = new Audio('lose.wav');
-        audio.play();
+        
+        audio1.play();
         this.style.backgroundImage = "url('mine.jpg')";
         this.style.backgroundSize = "cover";
         this.style.backgroundPosition = "center";
@@ -93,8 +108,8 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
         w.style.backgroundColor = "#ff4444";
         w.disabled = true;
       } else {
-        const audio = new Audio('ting.mp3');
-        audio.play();
+        
+        audio2.play();
         this.style.backgroundImage = "url('diamond.svg')";
         this.style.backgroundSize = "cover";
         this.style.backgroundPosition = "center";
@@ -123,8 +138,7 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
     let balanceElement = document.querySelector(".balance");
     let balance = Number(balanceElement.textContent.match(/\d+/)[0]);
     balance += currentWinning;
-    const audio = new Audio('money.mp3');
-    audio.play();
+    audio3.play();
     balanceElement.textContent = `BALANCE: ${balance} $`;
     document.querySelector(".winning").textContent = `BET: 0$`;
     cnt = 0;
@@ -134,4 +148,3 @@ document.querySelector(".gameform").addEventListener("submit", function (e) {
     resetGame();
   });
 });
-
